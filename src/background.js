@@ -4,7 +4,7 @@ const connections = {}
 function postEvent(eventType, eventArgs = {}) {
   return `
     ;(function(){
-      const event = new CustomEvent('${eventType}', ${JSON.stringify(eventArgs)})
+      const event = new CustomEvent('${eventType}', ${JSON.stringify({detail: eventArgs})})
       document.dispatchEvent(event)
     }())
   `
@@ -12,14 +12,14 @@ function postEvent(eventType, eventArgs = {}) {
 
 chrome.runtime.onConnect.addListener((port) => {
   // background.js
-  let openCount = 0
+  let openCount = 0,
+    tabId = null
   const extensionListener = function (message, sender, sendResponse) {
     // The original connection event doesn't include the tab ID of the
     // DevTools page, so we need to send it explicitly.
-    if(message.name === 'init') {
+    if(port.name === 'devtools-page' && message.name === 'init') {
       connections[message.tabId] = port
-    }
-    if(port.name === 'devtools-page') {
+      tabId = message.tabId
       if(openCount === 0) {
         // lert("DevTools window opening.");
         chrome.tabs.executeScript(message.tabId, {code: postEvent('spritejs: devtools-opened')})
@@ -32,6 +32,10 @@ chrome.runtime.onConnect.addListener((port) => {
           chrome.tabs.executeScript(message.tabId, {code: postEvent('spritejs: devtools-closed')})
         }
       })
+    } else if(port.name === 'sprite-element' && message.name === 'init') {
+      connections.sidebar = port
+    } else if(port.name === 'sprite-element') {
+      chrome.tabs.executeScript(tabId, {code: postEvent('spritejs: attr-change', message)})
     }
   }
 
@@ -59,12 +63,15 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     const tabId = sender.tab.id
     if(tabId in connections) {
       const port = connections[tabId]
-      if(port.name === 'devtools-page' && request === 'init') {
+      if(request === 'init' && port.name === 'devtools-page') {
         setTimeout(() => {
           chrome.tabs.executeScript(tabId, {code: postEvent('spritejs: devtools-opened')})
         }, 300)
+        port.postMessage('init')
+      } else if(connections.sidebar) {
+        connections.sidebar.postMessage(request)
       }
-      connections[tabId].postMessage(request)
+      // connections[tabId].postMessage(request)
     } else {
       // console.log("Tab not found in connection list.", sender);
     }

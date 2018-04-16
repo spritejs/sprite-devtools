@@ -1,6 +1,7 @@
 module.exports = {
   globals: {
     chrome: true,
+    JSONView: true,
   },
   "extends":  "eslint-config-75team",
   rules: {
