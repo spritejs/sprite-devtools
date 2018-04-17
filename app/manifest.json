@@ -1,0 +1,36 @@
+{
+	"manifest_version": 2,
+	"name": "sprite-devtools",
+	"version": "0.1.0",
+	"description": "spritejs devtools",
+	"icons":
+	{
+		"16": "img/icon.png",
+		"48": "img/icon.png",
+		"128": "img/icon.png"
+	},
+	"permissions":
+	[
+		"storage", "tabs", "*://*/*"
+	],
+  "devtools_page": "devtools.html",
+  "content_scripts": 
+  [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["js/content-script.js"],
+      "run_at": "document_end"
+    }
+  ],
+	"homepage_url": "http://spritejs.org",
+	"background":
+	{
+		"scripts": ["js/background.js"]
+	},
+	"web_accessible_resources": [
+		"js/background.js",
+		"js/content-script.js", 
+		"js/jsonview.js",
+		"js/sprite-element.js", 
+		"css/jsonview.css"]
+}
