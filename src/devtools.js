@@ -6,7 +6,7 @@ chrome.devtools.panels.elements.createSidebarPane('Spritejs', (sidebar) => {
   })
 
   // sidebar.setObject({message: 'No element selected!'})
-  // sidebar.setPage('../sidebar.html')
+  sidebar.setPage('../sidebar.html')
 
   let timer = null
   backgroundPageConnection.onMessage.addListener((message) => {

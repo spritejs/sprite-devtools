@@ -21,14 +21,14 @@ chrome.runtime.onConnect.addListener((port) => {
       connections[message.tabId] = port
       tabId = message.tabId
       if(openCount === 0) {
-        // lert("DevTools window opening.");
+        console.log('DevTools window opening.')
         chrome.tabs.executeScript(message.tabId, {code: postEvent('spritejs: devtools-opened')})
       }
       openCount++
       port.onDisconnect.addListener((port) => {
         openCount--
         if(openCount === 0) {
-          // alert("Last DevTools window closing.");
+          console.log('Last DevTools window closing.')
           chrome.tabs.executeScript(message.tabId, {code: postEvent('spritejs: devtools-closed')})
         }
       })
