@@ -14,7 +14,11 @@ document.body.appendChild(view.dom)
 view.on('change', (key, oldValue, newValue) => {
   // console.log('change', key, oldValue, '=>', newValue)
   if(!backgroundChange) {
-    backgroundPageConnection.postMessage({key, value: newValue})
+    backgroundPageConnection.postMessage({
+      key,
+      value: newValue,
+      tabId: chrome.devtools.inspectedWindow.tabId,
+    })
   }
 })
 
@@ -24,7 +28,10 @@ view.expand(true)
 // Inspect window.data on the console and note that it changes with edits.
 // window.data = view.value
 
-backgroundPageConnection.postMessage({name: 'init'})
+backgroundPageConnection.postMessage({
+  name: 'init',
+  tabId: chrome.devtools.inspectedWindow.tabId,
+})
 
 function isEqual(val1, val2) {
   if(val1 === val2) {
