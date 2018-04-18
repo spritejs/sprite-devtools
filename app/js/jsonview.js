@@ -188,7 +188,10 @@ function JSONView(name_, value_){
 		},
 
 		setChild : {
-			value: addChild,
+			value: function(key, value) {
+				addChild(key, value)
+				this.value[key] = value
+			},
 			enumerable: true
 		},
 
@@ -437,9 +440,8 @@ function JSONView(name_, value_){
 			child.on('delete', onChildDelete);
 			child.on('change', onChildChange);
 			children.push(child);
+			dom.children.appendChild(child.dom);
 		}
-
-		dom.children.appendChild(child.dom);
 
 		return child;
 	}

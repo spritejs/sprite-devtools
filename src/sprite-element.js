@@ -50,6 +50,12 @@ function isEqual(val1, val2) {
 }
 
 backgroundPageConnection.onMessage.addListener((element) => {
+  if(!element) {
+    view.value = {
+      message: 'Select sprite element to show',
+    }
+    return
+  }
   const data = view.value
   if(data.message) {
     delete data.message

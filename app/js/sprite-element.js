@@ -60,21 +60,27 @@ function isEqual(val1, val2) {
 }
 
 backgroundPageConnection.onMessage.addListener(function (element) {
-  var data = view.value;
-  if (data.message) {
-    delete data.message;
-    view.refresh();
-  }
-  Object.entries(element).forEach(function (_ref3) {
-    var _ref4 = _slicedToArray(_ref3, 2),
-        key = _ref4[0],
-        value = _ref4[1];
-
-    if (!isEqual(value, data[key])) {
-      backgroundChange = true;
-      view.setChild(key, value);
-      backgroundChange = false;
+  backgroundChange = true;
+  if (!element) {
+    view.value = {
+      message: 'Select sprite element to show'
+    };
+  } else {
+    var data = view.value;
+    if (data.message) {
+      delete data.message;
+      view.refresh();
     }
-  });
+    Object.entries(element).forEach(function (_ref3) {
+      var _ref4 = _slicedToArray(_ref3, 2),
+          key = _ref4[0],
+          value = _ref4[1];
+
+      if (!isEqual(value, data[key])) {
+        view.setChild(key, value);
+      }
+    });
+  }
+  backgroundChange = false;
   // view.expand(true)
 });
